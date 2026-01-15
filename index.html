@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>재미로 보는 스콜의 야매점술</title>
+    
+    <link rel="icon" href="하양계묘.png" type="image/png">
+
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --main-font: 'Pretendard', sans-serif;
+            --title-font: 'Gowun Batang', serif;
+            --accent-color: #1a237e; 
+            --glass-bg: rgba(225, 245, 254, 0.95); 
+            --glass-border: 1px solid rgba(255, 255, 255, 0.6);
+            --text-color: #0d47a1;
+            --text-body: #37474f;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            color: var(--text-body);
+            font-family: var(--main-font);
+            background-color: #000;
+            overflow-x: hidden;
+            line-height: 1.7;
+            cursor: url('alternate.cur'), auto; 
+        }
+
+        /* 커서 설정 */
+        a, button, .custom-btn, .tab-content.active, input, textarea, select, .modal-close, .popup-btn, .nav-logo {
+            cursor: url('dgn1.cur'), pointer !important; 
+        }
+        a:active, button:active, .custom-btn:active {
+            cursor: url('dgn1.cur'), pointer !important;
+        }
+
+        /* 배경 영상 */
+        #bg-video {
+            position: fixed; right: 0; bottom: 0;
+            min-width: 100%; min-height: 100%;
+            z-index: -3; object-fit: cover;
+        }
+        .video-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            z-index: -2;
+        }
+        #magic-dust {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: 9999;
+        }
+
+        /* 네비게이션 */
+        nav {
+            position: fixed; top: 0; width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 999999; /* 최상위 보장 */
+            padding: 5px 0; /* 패딩을 줄여서 로고가 꽉 차 보이게 함 */
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex; justify-content: center; align-items: center; gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        /* 로고 스타일 (확대 적용) */
+        .nav-logo {
+            height: 60px; /* 로고 크기 대폭 확대 */
+            width: auto;
+            margin-right: 15px;
+            transition: 0.3s;
+        }
+        .nav-logo:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 5px rgba(26, 35, 126, 0.3));
+        }
+
+        nav button {
+            background: none; border: none;
+            font-family: var(--title-font); font-size: 1.1rem;
+            font-weight: bold; color: var(--text-color);
+            padding: 8px 15px; transition: 0.3s; border-radius: 20px;
+        }
+        nav button:hover, nav button.active {
+            background: var(--accent-color); color: #fff;
+        }
+
+        /* 레이아웃 */
+        .container {
+            max-width: 1100px; margin: 120px auto 50px auto;
+            display: flex; gap: 40px; padding: 0 20px; align-items: flex-start;
+        }
+
+        /* 사이드바 */
+        .sidebar {
+            width: 300px; flex-shrink: 0;
+            background: var(--glass-bg); border: var(--glass-border);
+            border-radius: 20px; padding: 30px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: sticky; top: 100px;
+        }
+        .profile-img {
+            width: 160px; height: 160px; border-radius: 50%; object-fit: cover;
+            border: 4px solid var(--accent-color); margin-bottom: 5px;
+        }
+        .img-caption {
+            font-size: 0.8rem; color: #1e88e5; font-weight: bold; margin-bottom: 10px; display: block;
+        }
+        .img-source { font-size: 0.7rem; color: #888; display: block; margin-bottom: 15px; }
+        .profile-name {
+            font-family: var(--title-font); font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;
+        }
+        .profile-name a {
+            color: var(--accent-color); text-decoration: none; border-bottom: 1px dashed var(--accent-color); transition: 0.3s;
+        }
+        .profile-name a:hover { color: #1e88e5; border-color: #1e88e5; }
+        
+        .profile-desc { text-align: left; font-size: 0.85rem; }
+        .profile-desc li { margin-bottom: 5px; list-style: none; }
+
+        /* 콘텐츠 영역 */
+        .content-area { flex-grow: 1; min-height: 600px; padding-bottom: 50px; }
+        .tab-content {
+            display: none; background: var(--glass-bg); border: var(--glass-border);
+            border-radius: 20px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            animation: fadeIn 0.5s ease;
+        }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 타이포그래피 */
+        h1, h2, h3 { font-family: var(--title-font); color: var(--accent-color); }
+        h2 { border-bottom: 2px solid var(--accent-color); padding-bottom: 10px; margin-top: 0; font-size: 1.8rem; }
+        h3 { margin-top: 30px; font-size: 1.2rem; margin-bottom: 10px;}
+        h4 { margin: 0 0 5px 0; font-size: 1.1rem; color: #1565c0; font-family: var(--title-font); }
+
+        .main-title-link { text-decoration: none; color: var(--accent-color); transition: 0.3s; }
+        .main-title-link:hover { color: #4fc3f7; text-shadow: 0 0 10px rgba(79, 195, 247, 0.5); }
+
+        /* 버튼 */
+        .btn-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 25px; justify-content: center; }
+        .custom-btn {
+            background: #fff; border: 2px solid var(--accent-color); color: var(--accent-color);
+            padding: 8px 16px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.9rem;
+            transition: 0.3s; display: inline-block; white-space: nowrap; cursor: pointer;
+        }
+        .custom-btn:hover {
+            background: var(--accent-color); color: #fff; transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(26, 35, 126, 0.3);
+        }
+
+        /* 팝업 버튼 */
+        .popup-btn-group { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .popup-btn {
+            background: rgba(255,255,255,0.7); border: 1px solid var(--accent-color); color: var(--accent-color);
+            padding: 15px; border-radius: 10px; font-family: var(--title-font); font-size: 1rem;
+            cursor: pointer; transition: 0.3s;
+        }
+        .popup-btn:hover {
+            background: var(--accent-color); color: #fff; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* 모달 팝업창 */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); z-index: 200000; backdrop-filter: blur(5px);
+            align-items: center; justify-content: center;
+        }
+        .modal-box {
+            background: #fff; width: 90%; max-width: 800px; max-height: 80vh; overflow-y: auto;
+            border-radius: 15px; padding: 40px; position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); animation: popUp 0.3s ease-out;
+        }
+        @keyframes popUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        
+        .modal-close {
+            position: absolute; top: 15px; right: 20px; font-size: 2rem; cursor: pointer; color: #aaa; transition:0.3s;
+        }
+        .modal-close:hover { color: #000; transform: rotate(90deg); }
+        
+        /* 모달 내용 스타일 */
+        .modal-content { font-size: 0.95rem; line-height: 1.8; color: #333; text-align: left; }
+        .modal-content h3 { color: var(--accent-color); border-bottom: 2px solid #ddd; padding-bottom: 10px; margin-bottom: 20px; }
+        .modal-content strong { color: #1565c0; }
+        .modal-content ul { padding-left: 20px; }
+        .modal-content li { margin-bottom: 5px; }
+        .modal-content hr { border: 0; border-top: 1px dashed #ccc; margin: 20px 0; }
+
+        /* 기타 스타일 */
+        .info-box { background: rgba(255, 255, 255, 0.6); border-left: 5px solid var(--accent-color); padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .price-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 20px 0; border-bottom: 1px dashed #aaa; }
+        .price-info p { margin: 0; font-size: 0.95rem; color: #555; line-height: 1.5; white-space: pre-line; }
+        .price-tag { font-weight: bold; font-size: 1.1rem; color: var(--accent-color); white-space: nowrap; margin-left: 15px; margin-top: 2px; }
+        .form-guide { background: #fff; padding: 25px; border-radius: 10px; margin-bottom: 20px; }
+        .form-guide dt { font-weight: bold; color: var(--accent-color); margin-top: 15px; }
+        .form-guide dd { margin-left: 0; margin-bottom: 10px; font-size: 0.95rem; color: #444; }
+
+        @media (max-width: 900px) {
+            .container { flex-direction: column; margin-top: 140px; }
+            .sidebar { width: 100%; position: relative; top: 0; }
+            nav { gap: 5px; padding: 10px; }
+            .modal-box { width: 95%; padding: 20px; }
+            .nav-logo { height: 40px; }
+        }
+    </style>
+</head>
+<body>
+
+    <video autoplay muted loop playsinline id="bg-video">
+        <source src="하늘애니.mp4" type="video/mp4">
+    </video>
+    <div class="video-overlay"></div>
+    <canvas id="magic-dust"></canvas>
+    
+    <div id="youtube-bgm"></div>
+    <audio id="click-sound" src="Bells.mp3" preload="auto"></audio>
+
+    <nav>
+        <img src="계묘로고.png" alt="로고" class="nav-logo" onclick="openTab('home')">
+        <button onclick="openTab('home')" class="active" id="btn-home">홈</button>
+        <button onclick="openTab('writing')" id="btn-writing">글·편집</button>
+        <button onclick="openTab('destiny')" id="btn-destiny">운명학</button>
+        <button onclick="openTab('divination')" id="btn-divination">점술학</button>
+        <button onclick="openTab('apply')" id="btn-apply">커미션 신청</button>
+    </nav>
+
+    <div class="container">
+        <aside class="sidebar">
+            <img src="하양계묘.png" alt="하양계묘" class="profile-img">
+            <span class="img-caption">[ 프사_홧타 커미션 ]</span>
+            <span class="img-source">이미지 출처: 본인 제작</span>
+            
+            <div class="profile-name">
+                <a href="https://x.com/Aaronwhale01" target="_blank">스콜</a>
+            </div>
+            
+            <p style="font-weight:bold; color:var(--accent-color);">타로/사주/점성학 전문</p>
+            
+            <div class="profile-desc">
+                <ul>
+                    <li>🎓 타로심리상담사 1급</li>
+                    <li>🎨 타로색채심리상담사 1급</li>
+                    <li>🛤️ 진로적성상담사 1급</li>
+                    <li>📝 명리심리상담사 1급</li>
+                    <br>
+                    <li>✨ 2015 대학전공으로 네이탈 점성학 입문</li>
+                    <li>✨ 2019 강헌 명리학 정식 수강</li>
+                    <li>✨ 현재 대유학당 자미두수 저서, 공부 中</li>
+                </ul>
+            </div>
+        </aside>
+
+        <main class="content-area">
+
+            <div id="home" class="tab-content active">
+                <div style="text-align:center; padding: 40px 0;">
+                    <h1 style="margin-bottom:15px;">
+                        <a href="https://turquoise-fernleaf-c90.notion.site/26310cc3798d804f8065fd70c74fdc68?pvs=143" target="_blank" class="main-title-link">
+                            재미로 보는 스콜의 야매점술
+                        </a>
+                    </h1>
+                    <p style="font-size:1.3rem; color:var(--accent-color); font-weight:bold;">[ 글 · 역학 커미션 ]</p>
+                    <hr style="width: 50%; margin: 30px auto; border:none; border-top:1px solid #aaa;">
+                    <p style="font-size:1.05rem; line-height:1.8; white-space: pre-line;">
+                        글 커미션 외에 현생과 서브컬쳐를 아우르는 역학 전문 커미션을 진행하고 있습니다.
+                        캐빌딩 · 캐서사 · 캐궁합 · 캐분석 · AU/IF · 자컾 · 자커 · 드림 특화
+                    </p>
+                </div>
+
+                <div class="btn-group">
+                    <a href="https://kre.pe/wKr1" target="_blank" class="custom-btn">📝 글 커미션</a>
+                    <a href="https://kre.pe/M0Cw" target="_blank" class="custom-btn">💬 실시간 상담</a>
+                    <a href="https://kre.pe/QAT2" target="_blank" class="custom-btn">📧 메일링 타로</a>
+                    <a href="https://kre.pe/CD8k" target="_blank" class="custom-btn">👻 괴담출근 전용 타로</a>
+                </div>
+            </div>
+
+            <div id="writing" class="tab-content">
+                <h2>🖋️ 글 · 편집 커미션</h2>
+                
+                <div style="text-align:right; margin-bottom:10px;">
+                    <a href="https://posty.pe/slx4kaa" target="_blank" class="custom-btn" style="padding:5px 15px; font-size:0.8rem;">📄 글 샘플 확인하기</a>
+                </div>
+
+                <div class="info-box">
+                    세계관 고증보다는 <strong>분위기 및 뉘앙스 위주의 연출</strong>을 지향합니다.<br>
+                    다양한 장르와 세계관 AU/IF 모두 가능합니다.<br>
+                    <span style="font-size:0.9rem; color:#d32f2f;">※ 소설 타입, 조각글, 자캐 커뮤니티 로그 특화</span>
+                </div>
+
+                <div class="price-list">
+                    <div class="price-item">
+                        <div class="price-info">
+                            <h4>가벼운 글쓰기 (3,000자 이하)</h4>
+                            <p>공백 미포함 / 상시 할인 혜택 적용</p>
+                        </div>
+                        <div class="price-tag">1,000자당 3,000원</div>
+                    </div>
+                    <div class="price-item">
+                        <div class="price-info">
+                            <h4>기본 글쓰기 (3,000자 초과)</h4>
+                            <p>공백 미포함</p>
+                        </div>
+                        <div class="price-tag">1,000자당 7,000원</div>
+                    </div>
+                </div>
+
+                <h3>⚠️ 작업 및 환불 규정</h3>
+                <div style="background:#fff; padding:25px; border-radius:10px; font-size:0.9rem; line-height:1.6;">
+                    <div style="margin-bottom:12px; padding-left:15px; text-indent:-15px;">
+                        <strong>1. 공개 안내 :</strong> 민감한 내용 제외하고 샘플 공개(일부/전문) 될 수 있습니다.
+                    </div>
+                    <div style="margin-bottom:12px; padding-left:15px; text-indent:-15px;">
+                        <strong>2. 요청 주의 :</strong> 요구 사항이 까다롭고 복잡할 경우, 추가 비용 발생
+                    </div>
+                    <div style="margin-bottom:12px; padding-left:15px; text-indent:-15px;">
+                        <strong>3. 사전 숙지 원칙 :</strong> 사전에 숙지해야 할 내용이 많을 시, 추가 비용 발생 및 작업 시간 연장
+                    </div>
+                    <div style="margin-bottom:12px; padding-left:15px; text-indent:-15px;">
+                        <strong>4. 수정 원칙 :</strong> 사실 오류/사전 요구 미이행은 무상 수정, [취향 변경·사전 요청 못함]으로 인한 추가요청은 추가 비용 발생.
+                    </div>
+                    <div style="margin-bottom:12px; padding-left:15px; text-indent:-15px;">
+                        <strong>5. 납기/소통 원칙 :</strong> 사전 합의와 다른 변동사항 발생시 연락 채널을 활용합니다.<br> (지연 우려 시 사전 안내)
+                    </div>
+                    <div style="margin-bottom:12px; padding-left:30px; font-size:0.85rem; color:#555;">
+                        - 사전 합의된 마감일을 지키지 못할 경우, 환불 혹은 그에 상응하는 보상으로 대신 합니다.<br>
+                        - 단, 필수 확인 자료에 대한 의뢰자의 무응답, 지연답변으로 인해 작업 기간이 연장될 경우, 책임지지 않습니다.<br>
+                        - 의뢰인이 요구하지 않는 추가분 발생시(사전합의 없을 경우)에는 추가금을 요구하지 않습니다.
+                    </div>
+                    <div style="margin-bottom:12px; padding-left:15px; text-indent:-15px;">
+                        <strong>6. 파일 전달 :</strong> SNS 등에 올리기 편한 JPEG 파일로 기본 제공 하고 있습니다.
+                    </div>
+                    <hr style="margin:15px 0; border:0; border-top:1px dashed #ccc;">
+                    <p style="color:var(--accent-color); font-weight:bold; margin:0;">※ 필수 사전자료가 없어도 키워드만으로 '오마카세' 진행이 가능합니다.</p>
+                </div>
+            </div>
+
+            <div id="destiny" class="tab-content">
+                <h2>🌌 운명학 (Destiny)</h2>
+                
+                <div class="popup-btn-group">
+                    <button class="popup-btn" onclick="openModal('term')">📖 타로 기본 용어</button>
+                    <button class="popup-btn" onclick="openModal('vs')">⚖️ 운명학 vs 점술학</button>
+                    <button class="popup-btn" onclick="openModal('first')">🌱 타로가 처음이에요</button>
+                    <button class="popup-btn" onclick="openModal('question')">❓ 어떤 질문이 좋은가요?</button>
+                    <button class="popup-btn" onclick="openModal('repeat')">🔄 같은 질문 반복?</button>
+                </div>
+
+                <div class="price-list">
+                    <div class="price-item">
+                        <div class="price-info">
+                            <h4>[전반적인 사주풀이] 내 캐릭터의 사주팔자는?</h4>
+                            <p>기반 : 사주명리학(강헌 명리학) / 일주동물, 오행분석, 성향풀이, 신살풀이, 십성풀이(+근묘화실), 직업적성, 신약신강, 용신풀이 그 외 기타 요소 전부 아우르는 풀이</p>
+                        </div>
+                        <div class="price-tag">30,000원</div>
+                    </div>
+                    <div class="price-item">
+                        <div class="price-info">
+                            <h4>[2인 궁합 기준] 캐릭터 간의 화학작용</h4>
+                            <p>기반 : 사주 명리학 / 일간 비교, 지지 비교, 사적인 자리, 공적인 자리, 주변 반응, 오행의 균형, 형충파해 요소 파악, 근래의 관계 ─ 필연인가? 파국인가? 관계성의 역학 (다인관은 별도 문의)</p>
+                        </div>
+                        <div class="price-tag">20,000원</div>
+                    </div>
+                    <div class="price-item">
+                        <div class="price-info">
+                            <h4>[자미두수] 동양의 별로 보는 캐릭터의 특징</h4>
+                            <p>기반 : 자미두수 명반 / 12개 궁으로 보는 인생 성적표(성향, 직업, 재물, 윗사람, 아랫사람, 이동 등등)</p>
+                        </div>
+                        <div class="price-tag">20,000원</div>
+                    </div>
+                    <div class="price-item">
+                        <div class="price-info">
+                            <h4>[당사주 변형] 전생을 통해 캐릭터의 서사를 쌓아올리다.</h4>
+                            <p>기반 : 당사주 변형 / 초년˙청년˙중년˙말년의 인생 그래프를 그림처럼 직관적으로 풀이 (다인관은 별도 문의)</p>
+                        </div>
+                        <div class="price-tag">1인 2.0 / 2인 3.0</div>
+                    </div>
+                    <div class="price-item">
+                        <div class="price-info">
+                            <h4>[네이탈 점성학] 별이 알려주는 내 캐릭터의 숙명</h4>
+                            <p>기반 : 네이탈 점성학 / 첫인상, 트라우마, 직업, 인생의 장애 등등(각 하우스별 행성이 배치된 것에 따른 해석 풀이)</p>
+                        </div>
+                        <div class="price-tag">35,000원</div>
+                    </div>
+                    <div class="price-item">
+                        <div class="price-info">
+                            <h4>소울넘버 타로 (질문 3개)</h4>
+                            <p>생년월일 수비학 + 타로카드로 운명학과 점술학의 콜라보 형태<br>운명학으로 숲을 보고, 점술학으로 나무를 보다.</p>
+                        </div>
+                        <div class="price-tag">20,000원</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="divination" class="tab-content">
+                <h2>🃏 점술학 (Divination)</h2>
+                <p>현재의 고민, 가까운 미래, 상대방의 속마음 등을 타로 카드로 리딩합니다.</p>
+
+                <div class="price-list">
+                    <div class="price-item">
+                        <div class="price-info">
+                            <h4>질문 1개당 5,000원</h4>
+                            <p>시간에 구애받지 않고, 최소 카드 3장을 통해 상세히 보는 타입.</p>
+                        </div>
+                        <div class="price-tag">5,000원</div>
+                    </div>
+                    <div class="price-item">
+                        <div class="price-info">
+                            <h4>[실시간] 무한 질문 (시간제)</h4>
+                            <p>15분 단위 / 시간 내 질문 개수 무제한</p>
+                        </div>
+                        <div class="price-tag">15분당 5,000원</div>
+                    </div>
+                    <div class="price-item">
+                        <div class="price-info">
+                            <h4>원카드 (One Card)</h4>
+                            <p>YES or NO, 가장 심플하고 명쾌한 해답</p>
+                        </div>
+                        <div class="price-tag">1,000원</div>
+                    </div>
+                    <div class="price-item">
+                        <div class="price-info">
+                            <h4>투카드 (Two Cards)</h4>
+                            <p>대비되는 두 가지 상황 비교 (A vs B)</p>
+                        </div>
+                        <div class="price-tag">3,000원</div>
+                    </div>
+                    <div class="price-item">
+                        <div class="price-info">
+                            <h4>쓰리카드 (Three Cards)</h4>
+                            <p>과거 - 현재 - 미래의 흐름 파악</p>
+                        </div>
+                        <div class="price-tag">5,000원</div>
+                    </div>
+                </div>
+                
+                <div class="info-box" style="margin-top:40px;">
+                    <strong>💡 실시간 상담 안내</strong>
+                    <p style="margin-top:10px; font-size:0.95rem; text-align:justify;">
+                        운명학이 거대한 숲을 본다면, 점술학은 그 안의 나무를 봅니다. 
+                        운명학은 선천적으로 타고난 기질과 큰 흐름을 파악하는 데 적합하나, 양자택일이나 현재 결과에 대한 직접적인 답을 도출하는 데에는 한계가 있습니다.<br><br>
+                        반면, 점술학은 <strong>현재의 운에 맡기는 형태</strong>이기 때문에, 운명학에 비해 <strong>직접적인 질문에 대한 답을 확실하게</strong> 나타냅니다.
+                    </p>
+                </div>
+            </div>
+
+            <div id="apply" class="tab-content">
+                <h2>📩 커미션 신청하기</h2>
+                <p>아래 버튼을 눌러 오픈카톡으로 양식에 맞춰 신청해주세요.</p>
+
+                <div style="text-align:center; margin: 30px 0;">
+                    <a href="https://open.kakao.com/o/s4akcG9g" target="_blank" class="custom-btn" style="font-size:1.1rem; padding: 12px 30px;">
+                        💬 오픈카톡 신청 바로가기
+                    </a>
+                </div>
+
+                <h3>📝 운명학 필수 신청 자료</h3>
+                
+                <div style="text-align:right; margin-bottom:10px;">
+                    <button onclick="openModal('birthtime')" class="custom-btn" style="padding:5px 15px; font-size:0.8rem;">
+                        📄 생시 추론 및 캐릭터 시간 설정법
+                    </button>
+                </div>
+
+                <div class="form-guide">
+                    <h4 style="border-bottom:2px solid var(--accent-color); display:inline-block; padding-bottom:5px;">🙋‍♂️ 현생 (Real-Life)</h4>
+                    <dl>
+                        <dt>1. 생년월일</dt>
+                        <dd>양력 기준으로 생년월일을 알려주세요.</dd>
+                        
+                        <dt>2. 출생시간</dt>
+                        <dd>오전과 오후를 명확히 알려줘야 합니다. 정확한 시간대를 모르면 오차 범위가 커집니다.</dd>
+                        
+                        <dt>3. 출생장소</dt>
+                        <dd>최소 '지역' 정도는 알려줘야 합니다. 지역이 넓을 경우 '00시 00구'까지 알려줘야 정확합니다.</dd>
+                        
+                        <dt>※ 참고</dt>
+                        <dd>궁합의 경우, 상대방 자료까지 모두 필요합니다.</dd>
+                    </dl>
+                </div>
+
+                <div class="form-guide" style="background:#f4f9fd;">
+                    <h4 style="border-bottom:2px solid var(--accent-color); display:inline-block; padding-bottom:5px;">🦄 서브컬쳐 (Character)</h4>
+                    <dl>
+                        <dt>1. 생년월일</dt>
+                        <dd>캐릭터가 무구한 세월을 살아온 인외적인 요소가 있다면, <strong>외관 모습 기준</strong>으로 출생년도를 설정해 주세요.
+                        출생년도는 <strong>1900년~현재년도</strong> 사이로만 받습니다.<br>
+                        (메타적 사유로 필요한 것이므로, 크게 고민할 필요가 없습니다.)</dd>
+                        
+                        <dt>2. 출생시간</dt>
+                        <dd>정확한 시간대 혹은 <strong>아침, 낮, 저녁, 밤, 새벽</strong> 등으로 알려주셔도 됩니다.</dd>
+                        
+                        <dt>3. 출생장소</dt>
+                        <dd>현대가 아닌 이세계(가상의 세계)일 경우, 해당 세계관과 <strong>가장 비슷한 현실의 국가</strong>(가능하면 지역명, 도시명까지)를 알려주세요.
+                        한국일 경우 지역명(예: 서울)까지 적어주면 더 좋습니다.</dd>
+                        
+                        <dt>4. 세계관 키워드</dt>
+                        <dd>대략적인 세계관 키워드를 사전에 알려주면, 해당 분위기와 컨셉에 맞춰서 캐빌딩/캐해석이 진행 가능합니다.
+                        특별히 적혀있지 않으면, 가장 무난한 형태로만 진행됩니다.</dd>
+                    </dl>
+                </div>
+                
+                <div style="background:rgba(255,255,255,0.7); padding:20px; border-radius:10px; margin-top:30px; text-align:center;">
+                    <p style="font-weight:bold; color:var(--accent-color);">📢 문의 안내</p>
+                    <p style="font-size:0.9rem; color:#555; text-align:left;">
+                        커미션 관련 요청 및 문의사항이 있을 시, 편히 연락주세요.<br>
+                        단, 질문 특성상 시간이 걸리거나 개인일정으로 답변을 바로 드리지 못하는 경우도 있습니다.<br>
+                        이점은 양해부탁드립니다. 기다리시면 꼭 답변드립니다.<br>
+                        <span style="color:#d32f2f;">(커미션 관련 외의 사적인 질문은 받지 않습니다)</span>
+                    </p>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <div id="modal" class="modal-overlay">
+        <div class="modal-box">
+            <span class="modal-close" onclick="closeModal()">×</span>
+            <div id="modal-content" class="modal-content"></div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        AOS.init({ duration: 1000, once: true });
+
+        // 탭 전환
+        function openTab(tabName) {
+            var contents = document.getElementsByClassName("tab-content");
+            for (var i = 0; i < contents.length; i++) contents[i].classList.remove("active");
+            
+            var navButtons = document.querySelectorAll("nav button");
+            for (var i = 0; i < navButtons.length; i++) navButtons[i].classList.remove("active");
+            
+            document.getElementById(tabName).classList.add("active");
+            var btn = document.getElementById("btn-" + tabName);
+            if(btn) btn.classList.add("active");
+            window.scrollTo(0, 0);
+        }
+
+        // 클릭 효과음
+        document.addEventListener('click', function(e) {
+            if (e.target.tagName === 'BUTTON' || e.target.tagName === 'A' || e.target.closest('.custom-btn') || e.target.closest('button') || e.target.classList.contains('popup-btn') || e.target.classList.contains('modal-close')) {
+                var clickSound = document.getElementById('click-sound');
+                if (clickSound) {
+                    clickSound.currentTime = 0;
+                    clickSound.volume = 0.5;
+                    clickSound.play().catch(function(error) {});
+                }
+            }
+        });
+
+        // 팝업 모달 데이터 (생시 추론 내용 반영됨)
+        const modalData = {
+            'term': `<h3>◈ 타로 기본 용어 정리</h3>
+<strong>덱(deck) 카드 :</strong> 한 벌(1set) 유니버셜 웨이트 카드일 경우 78장 전체를 의미합니다. <br> 메이저 아르카나 22장, 마이너 아르카나 56장, 총 78장으로 이루어져 있습니다.<br><br>
+<strong>아르카나 (Arcana) :</strong> 라틴어 'arcana'에서 유래, '비밀'이란 뜻을 갖고 있습니다. <br> '비밀스럽고 신비한 지식' 혹은 '숨겨진 비밀'이라는 뜻으로 타로 카드 한 장 한 장을 부르는 이름입니다.<br><br>
+<strong>메이저 아르카나 (Major Arcana) :</strong> '중요한 비밀' 혹은 '큰 흐름', '커다란 영향'을 의미합니다. <br> 0~21번까지 번호가 매겨진 22장의 카드를 말합니다.<br>
+(종류 : 0.바보, 1.마법사, 2.여사제 ... 21.세계)<br><br>
+<strong>마이너 아르카나 (Minor Arcana) :</strong> 나머지 56장의 카드로 '작은 흐름', 사소한 일이나 사건을 나타내며 구체적이고 세밀한 뜻을 담고 있습니다.<br><br>
+<strong>4슈트(Suit) :</strong> 막대기(Wand), 컵(Cup), 검(Swords), 동전(Pentacles)을 의미합니다.<br><br>
+<strong>핍 카드(Pip Card) :</strong> 1번(Ace)부터 10번까지의 숫자 카드.<br>
+<strong>코트 카드(Court Card) :</strong> 왕, 여왕, 기사, 시종으로 구성된 인물 카드.<br><br>
+<strong>셔플(Shuffle) :</strong> 카드를 섞는 행위.<br>
+<strong>커팅(Cutting) :</strong> 카드를 섞을 때 일정한 묶음으로 나누는 것.<br>
+<strong>리딩(Reading) :</strong> 카드를 해석해 점을 보는 것. (키워드 리딩 / 이미지 리딩)<br>
+<strong>리더(Leader) :</strong> 비밀을 알려주고 이끌어주는 사람(타로 리더).<br>
+<strong>시커(Seeker) :</strong> 비밀을 찾는 이, 내담자.<br>
+<strong>클리닝(Cleaning) :</strong> 자기 정화와 명상 등 준비 단계.<br>
+<strong>스프레드(Spread) :</strong> 카드를 일정한 배열로 놓는 것.<br>
+<strong>오라클 카드 :</strong> 지혜로운 조언을 위한 별도의 카드.<br>
+<strong>래노먼드 카드 :</strong> 36장으로 구성된 키워드 중심의 점술 카드.<br>
+<strong>메일링 :</strong> 실시간 상담이 아닌 편집물 형태로 결과물을 받는 것.`,
+            
+            'vs': `<h3>◈ 운명학 vs 점술학</h3>
+점이란 인간의 미래를 훔쳐보려던 수단이었으나, 현대에는 심리학과 결합되어 다양한 견해가 존재합니다.<br> 누가 옳고 그름을 떠나 성질의 차이를 이해해주시면 좋습니다.<br><br>
+<strong>[운명학]</strong><br>
+우주 변화의 원리에 입각해 인간의 전반적인 삶을 추론합니다. (명리학, 점성학 등)<br>
+- <strong>적합한 질문 :</strong> "나와 적성에 맞는 일은?", "언제쯤 일이 잘 풀릴까?"<br>
+- <strong>부적합한 질문 :</strong> "이번에 합격할까요?", "A와 B 중 무엇을 선택할까요?"<br>
+운명학은 '큰 그림'을 보는 데 적합합니다.<br><br>
+<strong>[점술학]</strong><br>
+우주의 원리보다 '현재의 상황'과 '운'에 초점을 맞춥니다. (타로, 주역, 신점 등)<br>
+- 선택에 대한 결과나 구체적인 답변을 내놓습니다.<br>
+- 영화 '관상'의 대사처럼, 운명학이 '파도 아래의 흐름'이라면 점술학은 '파도'입니다.<br><br>
+점술학인 타로로도 캐빌딩이 가능하지만, 셔플 횟수나 기분에 따라 엉뚱한 카드가 나올 수 있어 운명학을 곁들이면 더 명확합니다.<br>
+※ 강헌 명리학에서는 이 둘을 엄격히 구분하지 않으나, 세분화하는 견해도 존재합니다.`,
+            
+            'first': `<h3>🌱 타로가 처음이에요</h3>
+본 역학 커미션은 처음 접하시는 분들도 이해하기 쉽게 진행되며, 세부적인 설명을 친절하게 드리는 것을 기본으로 하고 있습니다.<br><br>
+다만, 본 커미션은 <strong>레이키, 신점, 영타로, 신타로</strong>와 같은 신비주의적인 요소는 거의 포함되지 않으며, 그보다는 <strong>실용적이고 현실적인 해석</strong>에 중점을 두고 있습니다.<br><br>
+본 타로 리더는 엄연한 머글로, 영적이거나 신비적인 마법을 구사하지 않으며, 주로 다채로운 관점에서 명확한 결론을 도출할 수 있도록 해석을 돕고 있습니다.
+만약 신비주의나 불가사의한 힘, 영적인 체험 등을 기대하셨다면, 본 타로 커미션은 그 기대에 맞지 않을 수 있습니다.`,
+            
+            'question': `<h3>❓ 어떤 질문이 좋은가요?</h3>
+'질문을 어떻게 하느냐'에 따라 리딩의 깊이가 달라집니다. 타로는 미래 예언 도구라기보다 상황을 조명하는 거울과 같습니다.<br><br>
+<strong>[피해야 할 질문]</strong><br>
+"이 일이 잘 풀릴까요?", "그 사람이 날 좋아하나요?" 같은 단순 예/아니오 질문.<br>
+-> 해석의 가능성을 제한하고 오해를 부를 수 있습니다.<br><br>
+<strong>[좋은 질문]</strong><br>
+"앞으로 어떻게 될까요?"보다 <strong>"이 관계를 긍정적으로 발전시키기 위해 내가 취할 행동은?"</strong> 처럼 구체적이고 방향성을 띤 질문.<br><br>
+예시 :<br>
+- (X) "시험 붙을까요?"<br>
+- (O) "시험 준비에서 내가 가장 중점적으로 개선해야 할 부분은?"<br><br>
+- (X) "그 사람이 날 좋아하나요?"<br>
+- (O) "그 사람과의 관계에서 내가 놓치고 있는 감정 흐름은 무엇인가요?"<br><br>
+타로의 핵심은 '맞추는 것'이 아니라 <strong>'스스로 더 나은 선택을 돕는 것'</strong>입니다.`,
+            
+            'repeat': `<h3>🔄 같은 질문으로 재반복해서 보아도 되나요?</h3>
+같은 질문을 반복해서 보는 것은 권장하지 않습니다. 특별한 변화 없이 질문을 계속하면 리딩의 정확도가 떨어집니다.<br><br>
+타로 카드는 현재의 에너지와 내면 상태를 반영합니다. 같은 질문을 반복하면 질문자의 불안, 집착이 섞여 카드가 모호해집니다. 이는 흔들리는 손 위의 나침반과 같습니다.<br><br>
+또한, 질문 반복은 이전 리딩을 불신하는 것이기도 합니다. 한 번 받은 결과를 신중히 곱씹고 통찰을 얻는 것이 중요합니다.<br><br>
+<strong>[가능한 경우]</strong><br>
+상황에 <strong>새로운 변화나 변수</strong>가 생긴 경우(예 : 고백을 했다, 새로운 사건 발생 등)에는 다시 질문할 수 있습니다. 이때는 새로운 정보를 바탕으로 카드가 달라진 흐름을 반영합니다.<br><br>
+타로는 정답을 강요하는 도구가 아니라 조언의 도구임을 기억해주세요.`,
+
+            'birthtime': `<h3>🕰️ 생시 추론(보정)을 위한 체크리스트</h3>
+명리학자들은 보통 아래의 특징들을 물어보고 시간을 역추적합니다. 본인의 성향이나 과거 기억과 대조해 보세요.<br><br>
+<strong>A. 수면 습관 (전통적인 방법)</strong><br>
+잠을 잘 때 편안하게 느끼는 자세나, 아침에 일어났을 때의 모습으로 판단하기도 합니다.<br>
+- 하늘을 보고 똑바로 눕는 게 편하다 : <strong>자, 오, 묘, 유시</strong> <br>
+- 옆으로 눕거나 몸을 비스듬히 하는 게 편하다 : <strong>인, 신, 사, 해시</strong> <br>
+- 엎드리거나 몸을 웅크리는 게 편하다 : <strong>진, 술, 축, 미시</strong> <br><br>
+<strong>B. 가마(머리 가마)의 위치</strong><br>
+정수리에 있는 가마의 위치로 보기도 합니다.<br>
+- 가마가 정중앙에 있다 : <strong>오시 (자오묘유)</strong><br>
+- 가마가 약간 옆(왼쪽/오른쪽)에 치우쳐 있다 : <strong>사시 (인신사해)</strong><br>
+- 가마가 두 개 이상이거나 아주 비뚤어져 있다 : <strong>미시 (진술축미)</strong><br><br>
+<strong>C. 과거의 큰 사건 대입 (가장 정확함)</strong><br>
+가장 확실한 방법은 '삼주(생년월일)'만 가지고 풀었을 때 설명이 안 되는 사건을 시주(시간)에 대입해보는 것입니다.<br>
+- 예: 특정 연도에 큰 사고, 합격, 이별, 금전적 손실, 질병 등이 있었는데, 어느 시간을 넣었을 때 그 운의 흐름이 정확히 맞아떨어지는지 확인합니다.<br><hr>
+<strong>※ (서브컬쳐) 캐릭터 컨셉 시간 설정</strong><br>
+- 새벽 (03:30 ~ 05:30) : 활동적, 부지런함, 시작하는 기운<br>
+- 아침 (07:30 ~ 09:30) : 명랑함, 긍정적, 발산하는 에너지<br>
+- 한낮 (11:30 ~ 13:30) : 열정적, 화려함, 공적인 활동<br>
+- 저녁 (17:30 ~ 19:30) : 감성적, 차분함, 낭만적<br>
+- 한밤 (23:30 ~ 01:30) : 신비로움, 깊은 내면, 비밀스러움`
+        };
+
+        function openModal(key) {
+            document.getElementById('modal-content').innerHTML = modalData[key];
+            document.getElementById('modal').style.display = 'flex';
+        }
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // 유튜브 BGM
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-bgm', {
+                height: '0', width: '0',
+                videoId: 'qlhFrxEIH5Y',
+                playerVars: { 'autoplay': 1, 'loop': 1, 'playlist': 'qlhFrxEIH5Y', 'controls': 0 },
+                events: {
+                    'onReady': function(e) { e.target.setVolume(50); e.target.playVideo(); }
+                }
+            });
+        }
+
+        // 마법 가루
+        const canvas = document.getElementById('magic-dust');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize); resize();
+
+        class Particle {
+            constructor(x, y) {
+                this.x = x; this.y = y;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = Math.random() * 2 - 1; this.speedY = Math.random() * 2 - 1;
+                this.color = `hsla(${Math.random() * 60 + 180}, 100%, 70%, 1)`; 
+                this.life = 1.0;
+            }
+            update() {
+                this.x += this.speedX; this.y += this.speedY;
+                this.life -= 0.02; if (this.size > 0.1) this.size -= 0.05;
+            }
+            draw() {
+                ctx.fillStyle = this.color; ctx.globalAlpha = this.life;
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+            }
+        }
+        function handleParticles() {
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update(); particles[i].draw();
+                if (particles[i].life <= 0) { particles.splice(i, 1); i--; }
+            }
+        }
+        window.addEventListener('mousemove', function(e) {
+            for (let i = 0; i < 3; i++) particles.push(new Particle(e.x, e.y));
+        });
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); handleParticles(); requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
