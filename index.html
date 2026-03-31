@@ -200,6 +200,18 @@
         .form-guide dt { font-weight: bold; color: var(--accent-color); margin-top: 15px; }
         .form-guide dd { margin-left: 0; margin-bottom: 10px; font-size: 0.95rem; color: #444; }
 
+        /* 음악 켜기 플로팅 버튼 */
+        #music-trigger {
+            position: fixed; bottom: 20px; right: 20px;
+            z-index: 1000000;
+            background: var(--accent-color); color: #fff;
+            border: none; border-radius: 30px; padding: 12px 20px;
+            font-family: var(--title-font); font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: 0.3s;
+        }
+        #music-trigger:hover { transform: scale(1.1); background: #303f9f; }
+
         @media (max-width: 900px) {
             .container { flex-direction: column; margin-top: 140px; }
             .sidebar { width: 100%; position: relative; top: 0; }
@@ -210,6 +222,8 @@
     </style>
 </head>
 <body>
+
+    <button id="music-trigger" onclick="startMusic()">🎵 음악 켜기</button>
 
     <video autoplay muted loop playsinline id="bg-video">
         <source src="하늘애니.mp4" type="video/mp4">
@@ -357,7 +371,6 @@
                     <button class="popup-btn" onclick="openModal('first')">🌱 타로가 처음이에요</button>
                     <button class="popup-btn" onclick="openModal('question')">❓ 어떤 질문이 좋은가요?</button>
                     <button class="popup-btn" onclick="openModal('repeat')">🔄 같은 질문 반복?</button>
-                    <button class="popup-btn" onclick="openModal('birthtime')">🕰️ 생시 추론 가이드</button>
                 </div>
 
                 <div class="price-list">
@@ -668,15 +681,28 @@
         });
 
         var player;
+        var isMusicStarted = false;
+
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('youtube-bgm', {
                 height: '0', width: '0',
                 videoId: 'qlhFrxEIH5Y',
-                playerVars: { 'autoplay': 1, 'loop': 1, 'playlist': 'qlhFrxEIH5Y', 'controls': 0 },
+                playerVars: { 'autoplay': 0, 'loop': 1, 'playlist': 'qlhFrxEIH5Y', 'controls': 0 },
                 events: {
-                    'onReady': function(e) { e.target.setVolume(50); e.target.playVideo(); }
+                    'onReady': function(e) { 
+                        e.target.setVolume(50);
+                    }
                 }
             });
+        }
+
+        // 음악 시작 함수
+        function startMusic() {
+            if (player && player.playVideo) {
+                player.playVideo();
+                isMusicStarted = true;
+                document.getElementById('music-trigger').style.display = 'none'; // 버튼 숨기기
+            }
         }
 
         const canvas = document.getElementById('magic-dust');
